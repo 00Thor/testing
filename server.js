@@ -11,7 +11,6 @@ const upload = require("./middleware/multerConfig");
 const app = express();
 const server = http.createServer(app);
 const allowedOrigins = [
-  "https://ccpurcollege-v7.netlify.app",
   "https://admin-ccpur.netlify.app",
 ];
 // Middleware
