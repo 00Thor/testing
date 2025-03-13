@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const allowedOrigins = [
   "https://ccpurcollege-v7.netlify.app",
-  "https://admin-ccpur.netlify.app/admin-panel",
+  "https://admin-ccpur.netlify.app",
 ];
 // Middleware
 app.use(express.json());
