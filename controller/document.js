@@ -77,22 +77,29 @@ const getSpecificDocument = async (req, res) => {
     }
 
     const filePath = result.rows[0].file_path;
-    const absolutePath = path.join(UPLOADS_DIR, path.basename(filePath)); // Ensure correct path resolution
+    const absolutePath = path.join(UPLOADS_DIR, path.basename(filePath));
 
     // Check if the file exists
     if (!fs.existsSync(absolutePath)) {
-      console.error(`File not found at path: ${absolutePath}`); // Improved logging
+      console.error(`File not found at path: ${absolutePath}`);
       return res.status(404).json({ error: "File not found on the server." });
     }
 
-    // Generate file URL
-    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}`;
+    // Detect if the request comes from a mobile device
+    const userAgent = req.headers["user-agent"];
+    const isMobile = /mobile|android|iphone|ipad|phone/i.test(userAgent);
 
-// Force HTTPS in production environment if using HTTP
-if (process.env.NODE_ENV === 'production' && req.protocol === 'http') {
-  const httpsFileUrl = `https://${req.get('host')}/uploads/${pdf.filename}`;
-  fileUrl = httpsFileUrl;
-}
+    if (isMobile) {
+      return res.status(403).json({ error: "Access to this document is restricted on mobile devices." });
+    }
+
+    // Generate file URL
+    let fileUrl = `${req.protocol}://${req.get('host')}/${filePath}`;
+
+    // Force HTTPS in production
+    if (process.env.NODE_ENV === 'production' && req.protocol === 'http') {
+      fileUrl = `https://${req.get('host')}/${filePath}`;
+    }
 
     res.status(200).json({ fileUrl });
   } catch (error) {
@@ -100,6 +107,7 @@ if (process.env.NODE_ENV === 'production' && req.protocol === 'http') {
     res.status(500).json({ error: "Failed to fetch the PDF." });
   }
 };
+
 
 
 // Delete a specific PDF by doc_id
