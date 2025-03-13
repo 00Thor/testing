@@ -86,7 +86,13 @@ const getSpecificDocument = async (req, res) => {
     }
 
     // Generate file URL
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${path.basename(filePath)}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}`;
+
+// Force HTTPS in production environment if using HTTP
+if (process.env.NODE_ENV === 'production' && req.protocol === 'http') {
+  const httpsFileUrl = `https://${req.get('host')}/uploads/${pdf.filename}`;
+  fileUrl = httpsFileUrl;
+}
 
     res.status(200).json({ fileUrl });
   } catch (error) {
