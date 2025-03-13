@@ -10,11 +10,24 @@ const upload = require("./middleware/multerConfig");
 
 const app = express();
 const server = http.createServer(app);
-
+const allowedOrigins = [
+  "https://ccpurcollege-v7.netlify.app",
+  "https://admin-ccpur.netlify.app/admin-panel",
+];
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin:"*"})); // Restrict origin in production
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+}));
+
 app.use(helmet()); // Add security headers
 
 // Static files (uploads and frontend build)
