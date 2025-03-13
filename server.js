@@ -22,27 +22,22 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), { maxAge: "1
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build"))); // Serve frontend build
 }
-// Redirect HTTP to HTTPS
-app.use((req, res, next) => {
-  if (req.protocol !== 'https') {
-    return res.redirect('https://' + req.headers.host + req.url);
-  }
-  next();
-});
 // API routes
 app.post("/api/upload", upload.single("file"), uploadDocument);
 app.get("/api/documents", getAllDocuments);
 
 app.get("/api/documents/:doc_id", getSpecificDocument);
 app.delete("/api/delete/:doc_id", deleteSpecificDocument);
-// Handle undefined routes
-// app.use((req, res, next) => {
-//   if (process.env.NODE_ENV === "production") {
-//     res.sendFile(path.join(__dirname, "frontend", "build", "index.html")); // Fallback to frontend
-//   } else {
-//     res.status(404).json({ message: "Not Found" });
-//   }
-// });
+//Handle undefined routes
+if (process.env.NODE_ENV === 'production') {
+  // Redirect HTTP to HTTPS
+  app.use((req, res, next) => {
+    if (req.protocol === 'http') {
+      return res.redirect(301, `https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
 // Start server
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
