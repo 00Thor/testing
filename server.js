@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "*" })); // Restrict origin in production
+app.use(cors({ origin:"*"})); // Restrict origin in production
 app.use(helmet()); // Add security headers
 
 // Static files (uploads and frontend build)
