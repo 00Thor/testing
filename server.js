@@ -37,4 +37,8 @@ app.use((req, res, next) => {
     res.status(404).json({ message: "Not Found" });
   }
 });
-
+// Start server
+const PORT = process.env.PORT;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
