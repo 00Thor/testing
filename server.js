@@ -5,7 +5,7 @@ const http = require("http");
 const path = require("path");
 const helmet = require("helmet");
 
-const { uploadDocument, getAllDocuments, getSpecificDocument, deleteSpecificDocument } = require("./controller/document");
+const { uploadDocument, getAllDocuments, getSpecificDocument, deleteSpecificDocument, loginAdmin} = require("./controller/document");
 const upload = require("./middleware/multerConfig");
 
 const app = express();
@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build"))); // Serve frontend build
 }
 // API routes
+app.post("/api/login", loginAdmin);
 app.post("/api/upload", upload.single("file"), uploadDocument);
 app.get("/api/documents", getAllDocuments);
 
