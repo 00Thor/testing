@@ -138,8 +138,39 @@ const deleteSpecificDocument = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete the PDF.' });
   }
 };
+//LOGIN
+const loginAdmin = async (req, res) => {
+  try {
+    const { name, password } = req.body; // Use req.body for POST requests
 
+    // Validate input
+    if (!name || !password) {
+      return res.status(400).json({ error: "Name and password are required." });
+    }
+
+    // Query to check if the user exists
+    const query = `
+      SELECT name, password 
+      FROM users
+      WHERE name = $1 AND password = $2
+    `;
+    const result = await pool.query(query, [name, password]);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "Invalid name or password." });
+    }
+
+    // Return a success response
+    res.status(200).json({
+      message: "Login successful.",
+    });
+  } catch (error) {
+    console.error("Error in loginAdmin:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
+  loginAdmin,
   uploadDocument,
   getAllDocuments,
   getSpecificDocument,
