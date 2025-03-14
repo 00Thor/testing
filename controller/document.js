@@ -154,7 +154,7 @@ const loginAdmin = async (req, res) => {
       FROM users
       WHERE name = $1 AND password = $2
     `;
-    const result = await pool.query(query, [name, password]);
+    const result = await db.query(query, [name, password]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: "Invalid name or password." });
